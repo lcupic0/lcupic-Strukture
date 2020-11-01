@@ -1,4 +1,5 @@
-﻿#include<stdio.h>
+#define _CRT_SCURE_NO_WARNINGS
+#include<stdio.h>
 #include<stdlib.h>
 #define MAX_BODOVI 53
 
@@ -16,10 +17,10 @@ int brojacStudenata(FILE* nekadat) // Je li ovo najbolji nacin za poslati "datot
     char niz[100]; // Kako dinamicki alocirati ako ne unaprijed ne znam broj studenata
 
     while (fgets(niz, 100, nekadat) != NULL) {
-        if((niz[0] != '\n'))
-        brojac++;
+        if ((niz[0] != '\n'))
+            brojac++;
     }
-   
+
 
     return brojac;
 }
@@ -35,7 +36,7 @@ int MaxBodovi(Student* Studenti, int brojac) // Je li ovo najbolji nacin za posl
             maxbodovi = Studenti[i].bodovi;
     }
 
-    
+
     return maxbodovi;
 }
 
@@ -82,13 +83,13 @@ int main()
     Studenti = (Student*)malloc(brojac * sizeof(Student));
 
     ucitajStudenta(Studenti, brojac);
-    maxbodovi=MaxBodovi(Studenti, brojac);
+    maxbodovi = MaxBodovi(Studenti, brojac);
 
-    // Ispis Studenata - cc
-    printf("Ime\tPrezime\tBroj bodova\tRelativno bodovi\n\t");
+    // Ispis Studenata
+    printf("Ime\tPrezime\tBroj bodova\tRelativno bodovi\n");
     for (i = 0;i < brojac;i++) {
 
-        printf("%s\t%s\t%d\t\t%lf\n", Studenti[i].Ime, Studenti[i].Prezime, Studenti[i].bodovi, relativno(Studenti[i].bodovi,maxbodovi));
+        printf("%s\t%s\t%d\t\t%lf\n", Studenti[i].Ime, Studenti[i].Prezime, Studenti[i].bodovi, relativno(Studenti[i].bodovi, maxbodovi));
     }
 
     fclose(dat);

@@ -1,2 +1,2 @@
-C:\Users\Luka\source\repos\Strukture\Vjezba2\Debug\Vjezba2.exe
-C:\Users\Luka\source\repos\Strukture\Vjezba2\Debug\Vjezba2.pdb
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba2\Debug\Vjezba2.exe
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba2\Debug\Vjezba2.pdb
