@@ -1,1 +1,5 @@
-﻿  Vjezba2.vcxproj -> C:\Users\Luka\source\repos\StrukturePodataka\Vjezba2\Debug\Vjezba2.exe
+﻿  vjezba2.c
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba2\vjezba2.c(36,11): warning C4013: 'printf' undefined; assuming extern returning int
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba2\vjezba2.c(46,14): warning C4013: 'scanf' undefined; assuming extern returning int
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba2\vjezba2.c(32,9): warning C4101: 'pom': unreferenced local variable
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba2\vjezba2.c(34,10): warning C4101: 'ime': unreferenced local variable
