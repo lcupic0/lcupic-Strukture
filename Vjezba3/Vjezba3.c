@@ -26,7 +26,9 @@ int deleteElement(char* prezime, Position where);
 Position findPrev(char* prezime, Position where);
 int addAfter(Position what, Position where);
 int addBefore(Position what, Position where, char* prezime);
+int sortUnos(Position what, Position where);
 int writeDat(Position head);
+int scanDat(Position head);
 
 int main(void)
 {
@@ -34,7 +36,7 @@ int main(void)
     head.next = NULL;
     Position what;
     char izbor;
-    char ime[MAX], prezime[MAX];
+    char prezime[MAX];
 
     printf("Ako zelite izaci iz ovog izbornika unesite: K\n");
     printf("Ako zelite dodati studenta na kraj liste unesite 1\n");
@@ -43,6 +45,11 @@ int main(void)
     printf("Ako zelite pronaci prethodnog studenta unesite 4\n");
     printf("Ako zelite izbrisat studenta unesite 5\n");
     printf("Ako zelite studenta iza odredenog studenta unesite 6\n");
+    printf("Ako zelite studenta ispred odredenog studenta unesite 7\n");
+    printf("Ako zelite vasu listu studenata dodati u datoteku unesite 8\n");
+    printf("Ako zelite studente iz datoteke dodati u listu unesite 9\n");
+    printf("Ako zelite sortirani unos studenata unesite s\n");
+
     printf("Za ispis studenta unesite i\n");
 
     while (1)
@@ -97,6 +104,17 @@ int main(void)
         case '8':
             writeDat(&head);
             break;
+
+        case '9':
+            scanDat(&head);
+            break;
+
+        case 's':
+            printf("Unos studenta koji ce ici u listu sortiranu po prezimenu: \n");
+            what = createStudent();
+            sortUnos(what, &head);
+            break;
+        
         case 'i':
             printList(&head);
             break;
@@ -257,17 +275,48 @@ int writeDat(Position p) {
 
     return 0;
 }
+
+int sortUnos(Position what, Position where) { //where ce bit adresa od heada
+                                              //what - student kojeg unesemo --> pa ćemo njih dvojicu usporedivati po prezimenu i odma sortirati listu!
+    while (where->next != NULL && strcmp(what->prezime, where->next->prezime) > 0) // strcmp vraca negativan broj ako je prvi char manji od drugoga
+        where = where->next;
+
+    what->next = where->next;
+    where->next = what;
+
+    return 0;
+}
+
 //Dodavanje liste iz datoteke
-int scanDat(Position p, Position head) {
+int scanDat(Position head) {
 
+    int i = 0, brojac = 0;
+    char niz[MAX];
     FILE* dat;
-    dat = fopen("lista.txt", "r");
+    Position p;
 
+    //Otvaranje datoteke
+    dat = fopen("lista.txt", "r");
     if (dat == NULL)
         printf("Greska, datoteka nije otvorena!\n");
 
+    //Brojimo studente
+    while (fgets(niz, MAX, dat) != NULL)
+    {
+        if (niz[0] != '\n')
+            brojac++;
+    }
 
+    //Ucitavanje studenata u listu
+    for (i = 0; i < brojac; i++) {
+        p = (Position)malloc(sizeof(Student));
 
+        fscanf(dat, "%s %s %d", p->ime, p->prezime, &p->godinaRodjenja); //&p->godinaRodjenja - PAZITI na ovo!
 
+        // Zelimo da nam iduci clan doda na kraj tako da bude sortirano kao i u datoteci
+        insertEnd(p, head); 
+    }   
+
+    fclose(dat);
     return 0;
 }
