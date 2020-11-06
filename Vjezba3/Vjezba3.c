@@ -115,7 +115,7 @@ int main(void)
             what = createStudent();
             sortUnos(what, &head);
             break;
-        
+
         case 'i':
             printList(&head);
             break;
@@ -298,11 +298,11 @@ int brojacStudenata() {
     if (dat == NULL)
         printf("Greska, datoteka nije otvorena!\n");
 
-    while (fgets(niz,MAX, dat) != NULL) {
+    while (fgets(niz, MAX, dat) != NULL) {
         if ((niz[0] != '\n'))
             brojac++;
     }
-    
+
     fclose(dat);
     return brojac;
 }
@@ -324,9 +324,11 @@ int scanDat(Position head) {
         p = (Position)malloc(sizeof(Student));
         fgets(niz, MAX, dat);
         sscanf(niz, "%s %s %d\n", p->ime, p->prezime, &p->godinaRodjenja);
+
+        // Zelimo da nam iduci clan doda na kraj tako da bude sortirano kao i u datoteci i zato koristim insertEnd.
         insertEnd(p, head);
     }
-    
+
 
     fclose(dat);
     return 0;
