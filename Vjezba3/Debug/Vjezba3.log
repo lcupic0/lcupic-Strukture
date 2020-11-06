@@ -1,3 +1,4 @@
 ﻿  Vjezba3.c
-C:\Users\Luka\source\repos\StrukturePodataka\Vjezba3\Vjezba3.c(76,20): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'Position'
-C:\Users\Luka\source\repos\StrukturePodataka\Vjezba3\Vjezba3.c(82,20): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'Position'
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba3\Vjezba3.c(77,20): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'Position'
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba3\Vjezba3.c(83,20): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'Position'
+  Vjezba3.vcxproj -> C:\Users\Luka\source\repos\StrukturePodataka\Vjezba3\Debug\Vjezba3.exe

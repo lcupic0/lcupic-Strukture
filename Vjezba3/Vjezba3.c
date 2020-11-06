@@ -29,6 +29,7 @@ int addBefore(Position what, Position where, char* prezime);
 int sortUnos(Position what, Position where);
 int writeDat(Position head);
 int scanDat(Position head);
+int brojacStudenata();
 
 int main(void)
 {
@@ -287,35 +288,45 @@ int sortUnos(Position what, Position where) { //where ce bit adresa od heada
     return 0;
 }
 
-//Dodavanje liste iz datoteke
-int scanDat(Position head) {
-
-    int i = 0, brojac = 0;
-    char niz[MAX];
+int brojacStudenata() {
     FILE* dat;
-    Position p;
+    char niz[MAX];
+    int brojac = 0;
 
     //Otvaranje datoteke
     dat = fopen("lista.txt", "r");
     if (dat == NULL)
         printf("Greska, datoteka nije otvorena!\n");
 
-    //Brojimo studente
-    while (fgets(niz, MAX, dat) != NULL)
-    {
-        if (niz[0] != '\n')
+    while (fgets(niz,MAX, dat) != NULL) {
+        if ((niz[0] != '\n'))
             brojac++;
     }
+    
+    fclose(dat);
+    return brojac;
+}
+
+//Dodavanje liste iz datoteke
+int scanDat(Position head) {
+
+    int i = 0, brojac = 0;
+    char niz[MAX];
+    Position p;
+    FILE* dat;
+
+    brojac = brojacStudenata();
+    dat = fopen("lista.txt", "r");
 
     //Ucitavanje studenata u listu
+    printf("Ucitavanje studenata iz datoteke u listu\n");
     for (i = 0; i < brojac; i++) {
         p = (Position)malloc(sizeof(Student));
-
-        fscanf(dat, "%s %s %d", p->ime, p->prezime, &p->godinaRodjenja); //&p->godinaRodjenja - PAZITI na ovo!
-
-        // Zelimo da nam iduci clan doda na kraj tako da bude sortirano kao i u datoteci
-        insertEnd(p, head); 
-    }   
+        fgets(niz, MAX, dat);
+        sscanf(niz, "%s %s %d\n", p->ime, p->prezime, &p->godinaRodjenja);
+        insertEnd(p, head);
+    }
+    
 
     fclose(dat);
     return 0;
