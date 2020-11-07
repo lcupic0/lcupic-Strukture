@@ -1,1 +1,7 @@
-﻿  Vjezba4.vcxproj -> C:\Users\Luka\source\repos\StrukturePodataka\Vjezba4\Debug\Vjezba4.exe
+﻿  vjezba4.c
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba4\vjezba4.c(46,11): warning C4013: 'printList' undefined; assuming extern returning int
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba4\vjezba4.c(50,22): warning C4013: 'zbrajanjePol' undefined; assuming extern returning int
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba4\vjezba4.c(50,38): warning C4047: '=': 'Position' differs in levels of indirection from 'int'
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba4\vjezba4.c(29,6): warning C4101: 'coef': unreferenced local variable
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba4\vjezba4.c(29,12): warning C4101: 'exp': unreferenced local variable
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba4\vjezba4.c(114,10): error C2040: 'zbrajanjePol': 'Position (Position,Position)' differs in levels of indirection from 'int ()'

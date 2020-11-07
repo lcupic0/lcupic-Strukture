@@ -21,6 +21,7 @@ typedef struct polinom {
 int main()
 {
 	Polinom head1, head2;
+	Position zbroj = NULL;
 	head1.next = NULL;
 	head2.next = NULL;
 	FILE* dat1;
@@ -46,6 +47,11 @@ int main()
 	printf("Lista 2:\n");
 	printList(&head2);
 
+	zbroj = zbrajanjePol(&head1, &head2);
+
+	printf("Zbroj polinoma: \n");
+	printList(&zbroj);
+
 	return 0;
 }
 
@@ -58,7 +64,8 @@ int brojacKoef(FILE* dat) { //provjera ne triba jer je u skenu napravljena
 		if (niz[0] != '\n')
 			brojac++;
 	}
-	fclose(dat);
+	rewind(dat);
+	//fclose(dat); -- ne smimo zatvorit datoteku jer je kasnije opet kroistimo pa je zato koristim REWIND!
 	return brojac;
 }
 
@@ -102,4 +109,50 @@ int scanDat(FILE *dat, Position head) { //p je adresa od heada
 
 	fclose(dat);
 	return 0;
+}
+
+Position zbrajanjePol(Position p, Position q) {
+
+	Position r;
+	Position pom;
+
+	while (p != NULL && q != NULL) {
+
+		if (p->next->exp > q->next->exp) { // U slucaju da je jedan veci od drugoga u r zapisi veci i makni mu pokaziva na iduci clan
+			r = (Position)malloc(sizeof(Polinom));
+			r->coef = p->next->coef;
+			r->exp = p->next->exp;
+			p = p->next;
+		} 
+		else if (p->next->exp = q->next->exp) { // U slucaju istih exp, zbroji koef i postavi exp
+			r = (Position)malloc(sizeof(Polinom));
+			r->exp = p->exp;
+			r->coef = p->coef + q->coef;
+
+			if (r->coef == 0)
+				free(r); // ne triba nam prazni element tj. 0
+
+			p = p->next;
+			q = q->next;
+		}
+		else if (p == NULL && q->next != NULL) { // Ako je jedan kraci od drugoga nadi kraci i dodaj mu jos jedan prazni polinom
+			pom = (Position)malloc(sizeof(Polinom)); //slucaj kad je p kraci od q
+			pom->next = p->next;
+			p->next = pom;
+			pom->coef = 0;
+			pom->exp = 0;
+		}
+		else if (q == NULL && p->next != NULL) { // Ovo je u slucaju da je ipak q kraci od p
+			pom = (Position)malloc(sizeof(Polinom));
+			pom->next = q->next;
+			q->next = pom;
+			pom->coef = 0;
+			pom->exp = 0;
+		}
+		else
+			break;
+
+	}
+
+	return r;
 }
