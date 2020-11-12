@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
+﻿#define _CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -11,6 +11,7 @@ typedef struct polinom* Position;
 int scanDat(FILE*, Position);
 int brojacKoef(FILE*);
 int unosBeg(Position, Position);
+int sortUnos(Position , Position);
 
 typedef struct polinom {
 	int coef;
@@ -34,8 +35,6 @@ int main()
 	dat2 = fopen("datoteka2.txt", "r");
 	if (dat2 == NULL)
 		printf("Datoteka nije uspjesno otvorena!\n");
-
-	//fscanf(dat1, "%d %d", &coef, &exp); Ovdje ucita, a u datoteci nece
 
 	//ucitavanje listi
 	scanDat(dat1, &head1);
@@ -65,8 +64,19 @@ int brojacKoef(FILE* dat) { //provjera ne triba jer je u skenu napravljena
 			brojac++;
 	}
 	rewind(dat);
-	//fclose(dat); -- ne smimo zatvorit datoteku jer je kasnije opet kroistimo pa je zato koristim REWIND!
+	//fclose(dat); -- ne smimo zatvorit datoteku jer je kasnije opet kroistimo pa zato koristim REWIND!
 	return brojac;
+}
+
+int unosEnd(Position what, Position where) {
+
+	while (where->next != NULL) 
+		where = where->next;
+
+	what->next = where->next;
+	where->next = what;
+
+	return 0;
 }
 
 int unosBeg(Position what, Position where) {
@@ -95,7 +105,7 @@ int scanDat(FILE *dat, Position head) { //p je adresa od heada
 	brojac = brojacKoef(dat);
 
 	//stvaranje liste
-	for (i = 0;i < brojac;i++)
+	for (i = 0; i < brojac; i++)
 	{
 		fscanf(dat, "%d %d", &coef, &exp);
 
@@ -104,55 +114,56 @@ int scanDat(FILE *dat, Position head) { //p je adresa od heada
 		p->exp = exp;
 		p->next = NULL;
 
-		unosBeg(p, head);
+		sortUnos(p, head);
 	}
 
 	fclose(dat);
 	return 0;
 }
 
-Position zbrajanjePol(Position p, Position q) {
+int sortUnos(Position what, Position where) { //where ce bit adresa od heada
+											  //what - koeficijent + eksponent - JEDNA KUĆICA ajmo reć
+	
+	while (where->next != NULL && what->exp < where->next->exp) //where->next != NULL ?
+		where = where->next;
+
+	what->next = where->next;
+	where->next = what;
+
+	return 0;
+
+}
+
+Position zbrajanjePol(Position head1, Position head2) {
 
 	Position r;
 	Position pom;
 
-	while (p != NULL && q != NULL) {
+	while (head1->next != NULL && head2->next != NULL) {
 
-		if (p->next->exp > q->next->exp) { // U slucaju da je jedan veci od drugoga u r zapisi veci i makni mu pokaziva na iduci clan
+		if (head1->next->exp = head2->next->exp) { // U slucaju istih exp, zbroji koef i postavi exp
 			r = (Position)malloc(sizeof(Polinom));
-			r->coef = p->next->coef;
-			r->exp = p->next->exp;
-			p = p->next;
-		} 
-		else if (p->next->exp = q->next->exp) { // U slucaju istih exp, zbroji koef i postavi exp
-			r = (Position)malloc(sizeof(Polinom));
-			r->exp = p->exp;
-			r->coef = p->coef + q->coef;
+			r->exp = head1->exp;
+			r->coef = head1->coef + head2->coef;
 
 			if (r->coef == 0)
 				free(r); // ne triba nam prazni element tj. 0
 
-			p = p->next;
-			q = q->next;
+			head1 = head1->next;
+			head2 = head2->next;
 		}
-		else if (p == NULL && q->next != NULL) { // Ako je jedan kraci od drugoga nadi kraci i dodaj mu jos jedan prazni polinom
-			pom = (Position)malloc(sizeof(Polinom)); //slucaj kad je p kraci od q
-			pom->next = p->next;
-			p->next = pom;
-			pom->coef = 0;
-			pom->exp = 0;
+		else if (head1->next->exp > head2->next->exp) {
+			r = (Position)malloc(sizeof(Polinom));
+			r->coef = head1->next->coef;
+			r->exp = head1->next->exp;
+			head1 = head1->next;
 		}
-		else if (q == NULL && p->next != NULL) { // Ovo je u slucaju da je ipak q kraci od p
-			pom = (Position)malloc(sizeof(Polinom));
-			pom->next = q->next;
-			q->next = pom;
-			pom->coef = 0;
-			pom->exp = 0;
+		else if (head1->next->exp < head2->next->exp) { // U slucaju da je jedan veci od drugoga u r zapisi veci i makni mu pokaziva na iduci clan
+			r = (Position)malloc(sizeof(Polinom));
+			r->coef = head1->next->coef;
+			r->exp = head1->next->exp;
+			head1 = head1->next;
 		}
-		else
-			break;
 
 	}
-
-	return r;
 }
