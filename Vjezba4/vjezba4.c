@@ -12,6 +12,7 @@ int scanDat(FILE*, Position);
 int brojacKoef(FILE*);
 int unosBeg(Position, Position);
 int sortUnos(Position , Position);
+Position zbrajanjePol(Position, Position);
 
 typedef struct polinom {
 	int coef;
@@ -22,12 +23,12 @@ typedef struct polinom {
 int main()
 {
 	Polinom head1, head2;
-	Position zbroj = NULL;
-	head1.next = NULL;
-	head2.next = NULL;
+	Position zbroj;
+	zbroj = (Position)malloc(sizeof(Polinom)); zbroj->coef = 0; zbroj->exp = 0;
+	head1.next = NULL; head1.coef = 0; head1.exp = 0;
+	head2.next = NULL; head2.coef = 0; head2.exp = 0;
 	FILE* dat1;
 	FILE* dat2;
-	int coef, exp;
 	//Datoteke
 	dat1 = fopen("datoteka1.txt", "r");
 	if (dat1 == NULL)
@@ -49,7 +50,7 @@ int main()
 	zbroj = zbrajanjePol(&head1, &head2);
 
 	printf("Zbroj polinoma: \n");
-	printList(&zbroj);
+	printList(zbroj);
 
 	return 0;
 }
@@ -137,33 +138,62 @@ int sortUnos(Position what, Position where) { //where ce bit adresa od heada
 Position zbrajanjePol(Position head1, Position head2) {
 
 	Position r;
-	Position pom;
+	Position head;
+	head = (Position)malloc(sizeof(Polinom));
+	head->coef = 0;
+	head->exp = 0;
+	head->next = NULL;
 
 	while (head1->next != NULL && head2->next != NULL) {
 
-		if (head1->next->exp = head2->next->exp) { // U slucaju istih exp, zbroji koef i postavi exp
+		if (head1->next->exp == head2->next->exp) { // U slucaju istih exp, zbroji koef i postavi exp
 			r = (Position)malloc(sizeof(Polinom));
-			r->exp = head1->exp;
-			r->coef = head1->coef + head2->coef;
+			r->exp = head1->next->exp;
+			r->coef = head1->next->coef + head2->next->coef;
+
+			if(r->coef != 0)
+				sortUnos(r, head);
 
 			if (r->coef == 0)
 				free(r); // ne triba nam prazni element tj. 0
 
 			head1 = head1->next;
 			head2 = head2->next;
+			continue;
 		}
-		else if (head1->next->exp > head2->next->exp) {
+		if (head1->next->exp > head2->next->exp) {
 			r = (Position)malloc(sizeof(Polinom));
 			r->coef = head1->next->coef;
 			r->exp = head1->next->exp;
+			sortUnos(r, head);
 			head1 = head1->next;
+			if (head1->next == NULL)
+			{
+				r->coef = head2->next->coef;
+				r->exp = head2->next->exp;
+				unosEnd(r, head);
+			}
+			continue;
 		}
-		else if (head1->next->exp < head2->next->exp) { // U slucaju da je jedan veci od drugoga u r zapisi veci i makni mu pokaziva na iduci clan
+		if (head1->next->exp < head2->next->exp) { // U slucaju da je jedan veci od drugoga u r zapisi veci i makni mu pokaziva na iduci clan
 			r = (Position)malloc(sizeof(Polinom));
-			r->coef = head1->next->coef;
-			r->exp = head1->next->exp;
-			head1 = head1->next;
+			r->coef = head2->next->coef;
+			r->exp = head2->next->exp;
+			sortUnos(r, head);
+			head2 = head2->next;
+			if (head2->next == NULL)
+			{
+				//r->coef = head1->next->coef;
+				//r->exp = head1->next->exp;
+				head1 = head1->next;
+				unosEnd(head1, head);
+			}
 		}
 
+
 	}
+
+
+
+	return head;
 }
