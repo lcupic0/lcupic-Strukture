@@ -169,8 +169,7 @@ Position zbrajanjePol(Position head1, Position head2) {
 			head1 = head1->next;
 			if (head1->next == NULL)
 			{
-				r->coef = head2->next->coef;
-				r->exp = head2->next->exp;
+				head2 = head2->next;
 				unosEnd(r, head);
 			}
 			continue;
@@ -192,6 +191,31 @@ Position zbrajanjePol(Position head1, Position head2) {
 
 
 	}
+
+	return head;
+}
+
+Position umnozakPol(Position head1, Position head2) {
+
+	Position head;
+	Position r;
+
+	head = (Position)malloc(sizeof(Polinom));
+	head->coef = 0;
+	head->exp = 0;
+	head->next = NULL;
+
+	while (head1->next != NULL && head2->next != NULL) {
+
+		while (head2->next != NULL)
+		{
+
+			head1->next->coef
+		}
+
+
+	}
+	
 
 
 
