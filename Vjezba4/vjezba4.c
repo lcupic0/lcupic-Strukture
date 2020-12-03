@@ -60,7 +60,7 @@ int main()
 	printList(zbroj);
 
 	umnozak = umnozakPol(&head1, &head2, brojac1, brojac2);
-	printf("Umnozak polinoma: \n");
+	printf("Umnozak polinoma: (sortiran)\n");
 	printList(umnozak);
 
 	return 0;
@@ -204,8 +204,8 @@ Position zbrajanjePol(Position head1, Position head2) {
 
 Position umnozakPol(Position head1, Position head2, int brojac1, int brojac2) {
 
-	Position head;
-	Position r;
+	Position head, r;
+	Position pom = head2;
 	int i = 0, j = 0;
 
 	head = (Position)malloc(sizeof(Polinom));
@@ -221,6 +221,7 @@ Position umnozakPol(Position head1, Position head2, int brojac1, int brojac2) {
 			head2 = head2->next;
 		}
 		head1 = head1->next;
+		head2 = pom;
 	}
 
 	return head;
