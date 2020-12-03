@@ -11,6 +11,7 @@ int brojacKoef(FILE*);
 int unosBeg(Position, Position);
 int sortUnos(Position, Position);
 Position unijaLista(Position, Position);
+Position presjekLista(Position, Position, int, int);
 
 typedef struct element {
 	int coef;
@@ -23,11 +24,10 @@ int main()
 	head1.next = NULL; head1.coef = 0;
 	head2.next = NULL; head2.coef = 0;
 
-	Position unija;
-	unija = (Position)malloc(sizeof(Element)); unija->coef = 0;
+	Position unija = NULL, presjek = NULL;
 
 	FILE* dat1;
-	FILE* dat2;
+	FILE *dat2;
 
 	dat1 = fopen("datoteka1.txt", "r");
 	if (dat1 == NULL)
@@ -35,6 +35,9 @@ int main()
 	dat2 = fopen("datoteka2.txt", "r");
 	if (dat2 == NULL)
 		printf("Datoteka nije uspjesno otvorena!\n");
+
+	int brojac1 = brojacKoef(dat1);
+	int brojac2 = brojacKoef(dat2);
 
 	//ucitavanje listi
 	scanDat(dat1, &head1);
@@ -51,6 +54,10 @@ int main()
 
 	printf("Unija lista:\n");
 	printList(unija);
+
+	printf("Presjek lista:\n");
+	presjek = presjekLista(&head1, &head2, brojac1, brojac2);
+	printList(presjek);
 
 	system("pause");
 	return 0;
@@ -196,5 +203,31 @@ Position unijaLista(Position head1, Position head2) {
 
 
 	return head;
+}
 
+Position presjekLista(Position head1, Position head2, int brojac1, int brojac2) {
+
+	int i, j;
+	Position presjek = NULL;
+	Position head, pom;
+	head = (Position)malloc(sizeof(Element));
+	head->next = NULL; head->coef = 0;
+	pom = head2;
+
+	for (i = 0;i < brojac1;i++) {
+
+		for (j = 0;j < brojac2;j++) {
+
+			if (head1->next->coef == head2->next->coef) {
+				presjek = (Position)malloc(sizeof(Element));
+				presjek->coef = head1->next->coef;
+				sortUnos(presjek, head);
+			}
+			head2 = head2->next;
+		}
+		head1 = head1->next;
+		head2 = pom;
+	}
+
+	return head;
 }
