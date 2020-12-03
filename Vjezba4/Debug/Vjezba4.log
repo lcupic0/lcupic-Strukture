@@ -1,1 +1,2 @@
-﻿  Vjezba4.vcxproj -> C:\Users\Luka\source\repos\StrukturePodataka\Vjezba4\Debug\Vjezba4.exe
+﻿  vjezba4.c
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba4\vjezba4.c(53,11): warning C4013: 'printList' undefined; assuming extern returning int

@@ -3,6 +3,7 @@
 #include<stdlib.h>
 #include<string.h>
 
+//differs in levels of indirection = pozvana funkcija, a nismo je deklarirali na vrhu!
 //koeficijenti i eksponenti se citaju iz datoteke - u njoj ne moraju nuzno biti sortirani!
 
 struct polinom;
@@ -13,6 +14,7 @@ int brojacKoef(FILE*);
 int unosBeg(Position, Position);
 int sortUnos(Position , Position);
 Position zbrajanjePol(Position, Position);
+Position umnozakPol(Position, Position, int, int);
 
 typedef struct polinom {
 	int coef;
@@ -23,8 +25,10 @@ typedef struct polinom {
 int main()
 {
 	Polinom head1, head2;
-	Position zbroj;
+	Position zbroj, umnozak;
 	zbroj = (Position)malloc(sizeof(Polinom)); zbroj->coef = 0; zbroj->exp = 0;
+	umnozak = (Position)malloc(sizeof(Polinom)); umnozak->coef = 0; umnozak->exp = 0;
+
 	head1.next = NULL; head1.coef = 0; head1.exp = 0;
 	head2.next = NULL; head2.coef = 0; head2.exp = 0;
 	FILE* dat1;
@@ -36,6 +40,9 @@ int main()
 	dat2 = fopen("datoteka2.txt", "r");
 	if (dat2 == NULL)
 		printf("Datoteka nije uspjesno otvorena!\n");
+
+	int brojac1 = brojacKoef(dat1); 
+	int brojac2 = brojacKoef(dat2);
 
 	//ucitavanje listi
 	scanDat(dat1, &head1);
@@ -52,6 +59,10 @@ int main()
 	printf("Zbroj polinoma: \n");
 	printList(zbroj);
 
+	umnozak = umnozakPol(&head1, &head2, brojac1, brojac2);
+	printf("Umnozak polinoma: \n");
+	printList(umnozak);
+
 	return 0;
 }
 
@@ -59,7 +70,7 @@ int brojacKoef(FILE* dat) { //provjera ne triba jer je u skenu napravljena
 	char niz[50];
 	int brojac = 0;
 
-	while (fgets(niz, 50, dat) != NULL)
+	while (fgets(niz, 50, dat) != NULL) //NULL ce biti kada procita sve retke
 	{
 		if (niz[0] != '\n')
 			brojac++;
@@ -125,7 +136,7 @@ int scanDat(FILE *dat, Position head) { //p je adresa od heada
 int sortUnos(Position what, Position where) { //where ce bit adresa od heada
 											  //what - koeficijent + eksponent - JEDNA KUĆICA ajmo reć
 	
-	while (where->next != NULL && what->exp < where->next->exp) //where->next != NULL ?
+	while (where->next != NULL && what->exp < where->next->exp) //where->next != NULL ? -> vrtimo listu sa adresom od heada dok ne nademo manji exp.
 		where = where->next;
 
 	what->next = where->next;
@@ -140,22 +151,18 @@ Position zbrajanjePol(Position head1, Position head2) {
 	Position r;
 	Position head;
 	head = (Position)malloc(sizeof(Polinom));
-	head->coef = 0;
-	head->exp = 0;
-	head->next = NULL;
+	head->coef = 0; head->exp = 0; head->next = NULL;
 
 	while (head1->next != NULL && head2->next != NULL) {
 
 		if (head1->next->exp == head2->next->exp) { // U slucaju istih exp, zbroji koef i postavi exp
-			r = (Position)malloc(sizeof(Polinom));
-			r->exp = head1->next->exp;
-			r->coef = head1->next->coef + head2->next->coef;
 
-			if(r->coef != 0)
+			if (head1->next->coef + head2->next->coef != 0) {
+				r = (Position)malloc(sizeof(Polinom));
+				r->exp = head1->next->exp;
+				r->coef = head1->next->coef + head2->next->coef;
 				sortUnos(r, head);
-
-			if (r->coef == 0)
-				free(r); // ne triba nam prazni element tj. 0
+			}
 
 			head1 = head1->next;
 			head2 = head2->next;
@@ -174,7 +181,7 @@ Position zbrajanjePol(Position head1, Position head2) {
 			}
 			continue;
 		}
-		if (head1->next->exp < head2->next->exp) { // U slucaju da je jedan veci od drugoga u r zapisi veci i makni mu pokaziva na iduci clan
+		if (head1->next->exp < head2->next->exp) { // U slucaju da je jedan veci od drugoga u r zapisi veci i makni mu pokazivac na iduci clan
 			r = (Position)malloc(sizeof(Polinom));
 			r->coef = head2->next->coef;
 			r->exp = head2->next->exp;
@@ -182,7 +189,7 @@ Position zbrajanjePol(Position head1, Position head2) {
 			head2 = head2->next;
 			if (head2->next == NULL)
 			{
-				//r->coef = head1->next->coef;
+				//r->coef = head1->next->coef; 
 				//r->exp = head1->next->exp;
 				head1 = head1->next;
 				unosEnd(head1, head);
@@ -195,29 +202,26 @@ Position zbrajanjePol(Position head1, Position head2) {
 	return head;
 }
 
-Position umnozakPol(Position head1, Position head2) {
+Position umnozakPol(Position head1, Position head2, int brojac1, int brojac2) {
 
 	Position head;
 	Position r;
+	int i = 0, j = 0;
 
 	head = (Position)malloc(sizeof(Polinom));
-	head->coef = 0;
-	head->exp = 0;
-	head->next = NULL;
+	head->coef = 0; head->exp = 0; head->next = NULL;
 
-	while (head1->next != NULL && head2->next != NULL) {
+	for (j = 0; j < brojac1; j++) {
 
-		while (head2->next != NULL)
-		{
-
-			head1->next->coef
+		for (i = 0;i < brojac2;i++) {
+			r = (Position)malloc(sizeof(Polinom));
+			r->coef = head1->next->coef * head2->next->coef;
+			r->exp = head1->next->exp + head2->next->exp;
+			sortUnos(r, head);
+			head2 = head2->next;
 		}
-
-
+		head1 = head1->next;
 	}
-	
-
-
 
 	return head;
 }
