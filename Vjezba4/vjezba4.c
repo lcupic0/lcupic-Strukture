@@ -13,6 +13,7 @@ int scanDat(FILE*, Position);
 int brojacKoef(FILE*);
 int unosBeg(Position, Position);
 int sortUnos(Position , Position);
+int freeMalloc(Position);
 Position zbrajanjePol(Position, Position);
 Position umnozakPol(Position, Position, int, int);
 
@@ -62,6 +63,8 @@ int main()
 	umnozak = umnozakPol(&head1, &head2, brojac1, brojac2);
 	printf("Umnozak polinoma: (sortiran)\n");
 	printList(umnozak);
+
+	freeMalloc(&head1); freeMalloc(&head2); freeMalloc(umnozak); freeMalloc(zbroj);
 
 	return 0;
 }
@@ -225,4 +228,24 @@ Position umnozakPol(Position head1, Position head2, int brojac1, int brojac2) {
 	}
 
 	return head;
+}
+
+int freeMalloc(Position p) {
+
+	Position pocetak = p, prev = p;
+
+	while (pocetak->next != NULL) {
+>		while (p->next != NULL) {
+			prev = p;
+			p = p->next;
+		}
+
+		free(p);
+		prev->next = NULL;
+
+		prev = pocetak;
+		p = pocetak->next;
+	}
+	
+	return 0;
 }
