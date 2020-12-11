@@ -17,7 +17,7 @@ int Push(Position S);
 int Pop(Position S, Position first);
 int printStack(Position S);
 
-int PushRow(Position S, Position last);
+Position PushRow(Position S, Position last);
 int PopRow(Position S);
 
 int deleteAll(Position S);
@@ -44,10 +44,10 @@ int main()
 
 	printf("Ispis stoga: \n");
 	printStack(stack->next); 
-
+	last = row;
 	//Row 
 	for (i = 0;i < 4;i++) {
-		PushRow(row, last);
+		last=PushRow(row, last); //Da ne vrtimo while uvik vracat cemo zadnjeg i uvik ga slat.
 	}
 	PopRow(row);
 	
@@ -98,26 +98,25 @@ int printStack(Position first) { // S mora biti adresa prvog clana, a ne heada!
 	return 0;
 }
 
-int PushRow(Position S, Position last) { //Dodajemo na kraj, a skidamo s pocetka.
+Position PushRow(Position S, Position last) { //Dodajemo na kraj, a skidamo s pocetka.
 
 	int x;
 	Position new = (Position)malloc(sizeof(Data));
-	last = S; // Pazit na ovo inače nam pointer last neće ući u while petlju nego će ostati NULL pointer!
-
+	
 	x = 10 + rand() % 91;
-
+	/*
 	//zadnji element
-	while (S->next != NULL) {
+	while (S->next != NULL) {  ---> glupo je ovo korsitit jer svaki put vrtimo while pa nam nema smisla PRIPAZIT.
 		S = S->next;
 		last = S;
-	}
+	} */
 
 	new->El = x;
 	new->next = last->next;
 	last->next = new;
 	last = new;
 
-	return 0;
+	return last;
 }
 
 int PopRow(Position row) {
