@@ -33,18 +33,18 @@ int main()
 	fgets(buffer, 100, postfiks);
 
 	//Postupak računanja postfiksa
-	while (buffer != '\n')
+	while (*buffer != '\0')
 	{
 		value = sscanf(buffer, "%d%n", &digit, &counter);
 
-		if (value) // jer ne vraca striktno 1 ako je ucita broj, nego vraca neki broj.
+		if (value==1) // jer ne vraca striktno 1 ako je ucita broj, nego vraca neki broj.
 		{		   
 			Push(stack, digit);
 		}
 
-		if (value == 0)
+		if (value == 0 || value == -1)
 		{
-			sscanf(buffer, " %c", &operator);
+			sscanf(buffer, " %c", &operator); //pripaziti na ovaj razmake!
 			a = Pop(stack, stack->next);
 			b = Pop(stack, stack->next);
 
@@ -77,7 +77,7 @@ int main()
 
 
 	//ISPIS REZULTATA
-	printf("Ispis stoga: \n");
+	printf("Ispis stoga(rezultata): ");
 	printStack(stack->next);
 
 	//BRISANJE STOGA IZ MEMORIJE
