@@ -1,3 +1,11 @@
+/*
+	md - napravi novi direktorij
+	cd - pribaci se na neki drugi direktorij
+	cd .. - vrati se u prethodni direktorij
+	dir - ispis sadrzaja direktorija
+	exit - da nas izbaci iz programa
+*/
+
 #define _CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
 #include<stdlib.h>
@@ -27,28 +35,83 @@ typedef struct _stack {
 }Stack;
 
 void pushDirectory(PositionStack stack, PositionDir dir);
-PositionDir popDirectory(PositionStack stack, PositionDir dir);
+PositionDir popDirectory(PositionStack stack);
 void deleteTree(PositionDir first);
 PositionDir createDirectory(char *name);
 PositionDir findDirectory(PositionDir current, char* name);
 Result makeDirectory(PositionDir current, char* name);
+PositionDir findPrev(PositionDir current, char* name);
+Result printDir(PositionDir current);
+
 
 int main()
 {
+	int izbor = 0; 
+	char name[MAX_NAME_LENGTH];
 	PositionDir mainDir = NULL;
 	mainDir = createDirectory("C:");
 
 	PositionDir current = mainDir;
 
-	Stack stack; stack.next = NULL;
+	PositionStack stack = NULL; 
 
 	// Izbornik
 
+	printf("\t\tIZBORNIK\n");
+	printf("- Kreiranje novog direktorija (md): 0\n");
+	printf("- Promjena direktorija (cd): 1\n");
+	printf("- Povratak u prethodni direktorij (cd..): 2\n");
+	printf("- Ispisivanje sadrzaja direktorija (dir): 3\n");
+	printf("- Beginning: 4\n");
+	printf("- Exit: 5\n");
 
+	while (1) {
 
+		scanf("%d", &izbor);
+		if (izbor == 5)
+			break;
 
+		switch (izbor) 
+		{
 
+			case 0:
+				printf("Unesite ime novog direktorija: \n");
+				scanf(" %s", &name);
+				makeDirectory(current, name);
+				break;
 
+			case 1:
+				printf("Unesite ime direktorija na koji zelite ici: \n");
+				scanf(" %s", &name);
+				pushDirectory(stack, current);
+				current = findDirectory(current, name);
+				printf("Trenutno: %s", current->name);
+				break;
+
+			case 2:
+				current = popDirectory(stack);
+				printf("Trenutno: %s", current->name);
+				break;
+
+			case 3:
+				printDir(current);
+				break;
+
+			case 4:
+				current = mainDir;
+				printf("Trenutno: %s", current->name);
+				break;
+
+			case 5:
+				printf("Izabrali ste izlaz iz menu-a!\n");
+				break;
+
+			default:
+				printf("Unijeli ste krivu opciju!\n");
+
+		}
+
+	}
 
 
 	deleteTree(mainDir);
@@ -65,7 +128,7 @@ void pushDirectory(PositionStack stack, PositionDir dir) {
 	stack->next = new;
 }
 
-PositionDir popDirectory(PositionStack stack, PositionDir dir) {
+PositionDir popDirectory(PositionStack stack) {
 
 	PositionDir directory = NULL;
 	PositionStack first = stack->next;
@@ -114,13 +177,22 @@ PositionDir findDirectory(PositionDir current, char* name) {
 	return child;
 }
 
+PositionDir findPrev(PositionDir mainDir, char* name) {
+
+	PositionDir child = mainDir->child;
+
+	while (child->sibling->name != name)
+		child = child->sibling;
+
+}
+
 Result makeDirectory(PositionDir current, char* name) {
 
 	PositionDir el = NULL;
 	PositionDir child = NULL;
 
 	// 1) Da li vec postoji direktorij s ovim imenom
-	if (name == findDirectory(current, name)) //Ovo je malo drugacije
+	if (findDirectory(current, name) != NULL) 
 		return DUPLICATED_DIRECTORY;
 
 	el = createDirectory(name);
@@ -135,6 +207,7 @@ Result makeDirectory(PositionDir current, char* name) {
 	// 2) Slucaj kad nema drugih poddirektorija
 	if (child == NULL) {
 		child = el;
+		current->child = child; // (( Ovo je 1. sta sam doda ))
 		return SUCCESS;
 	}
 
@@ -152,6 +225,22 @@ Result makeDirectory(PositionDir current, char* name) {
 
 	el->sibling = child->sibling;
 	child->sibling = el;
+
+	return SUCCESS;
+}
+
+Result printDir(PositionDir current) {
+
+	PositionDir child = current->child;
+
+	if (child == NULL)
+		printf("Direktorij je prazan!\n");
+
+	while (child != NULL) {
+		printf("\t%s\n", child->name);
+		child = child->sibling;
+	}
+
 
 	return SUCCESS;
 }

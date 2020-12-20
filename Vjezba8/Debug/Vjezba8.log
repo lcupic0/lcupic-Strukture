@@ -1,1 +1,4 @@
-﻿  Vjezba8.vcxproj -> C:\Users\Luka\source\repos\StrukturePodataka\Vjezba8\Debug\Vjezba8.exe
+﻿  Vjezba8.c
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba8\Vjezba8.c(128,19): warning C4133: '=': incompatible types - from 'PositionStack' to 'PositionDir'
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba8\Vjezba8.c(134,1): warning C4133: 'initializing': incompatible types - from 'PositionDir' to 'PositionStack'
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba8\Vjezba8.c(187): warning C4716: 'findPrev': must return a value
