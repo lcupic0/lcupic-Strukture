@@ -53,7 +53,7 @@ int main()
 
 	PositionDir current = mainDir;
 
-	PositionStack stack = NULL; 
+	PositionStack stack = (PositionStack)malloc(sizeof(Stack));  stack->next = NULL;
 
 	// Izbornik
 
@@ -67,6 +67,9 @@ int main()
 
 	while (1) {
 
+		//if(strcmp(mainDir->name, current->name) != 0)
+			//printf("%s/%s/", mainDir->name, current->name);
+
 		scanf("%d", &izbor);
 		if (izbor == 5)
 			break;
@@ -74,35 +77,39 @@ int main()
 		switch (izbor) 
 		{
 
-			case 0:
-				printf("Unesite ime novog direktorija: \n");
+			case 0: //md
+				if(strcmp(mainDir->name, current->name) != 0)
+					printf("%s/%s/ \n", mainDir->name, current->name);
+
 				scanf(" %s", &name);
 				makeDirectory(current, name);
 				break;
 
-			case 1:
-				printf("Unesite ime direktorija na koji zelite ici: \n");
+			case 1: //cd
+				printf("%s/%s/ \n", mainDir->name, current->name);
+
 				scanf(" %s", &name);
+				printf("%s/", current->name);
 				pushDirectory(stack, current);
 				current = findDirectory(current, name);
-				printf("Trenutno: %s", current->name);
+				printf("%s/ \n", current->name);
 				break;
 
-			case 2:
+			case 2: //cd..
 				current = popDirectory(stack);
-				printf("Trenutno: %s", current->name);
+				printf("%s/\n", current->name);
 				break;
 
-			case 3:
+			case 3: //dir
 				printDir(current);
 				break;
 
-			case 4:
+			case 4: //beg
 				current = mainDir;
-				printf("Trenutno: %s", current->name);
+				printf("%s/\n", current->name);
 				break;
 
-			case 5:
+			case 5: //exit
 				printf("Izabrali ste izlaz iz menu-a!\n");
 				break;
 
@@ -236,8 +243,9 @@ Result printDir(PositionDir current) {
 	if (child == NULL)
 		printf("Direktorij je prazan!\n");
 
+	printf("Directory of %s:\n", current->name);
 	while (child != NULL) {
-		printf("\t%s\n", child->name);
+		printf("%s\n", child->name);
 		child = child->sibling;
 	}
 
