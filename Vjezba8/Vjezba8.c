@@ -56,7 +56,6 @@ int main()
 	PositionStack stack = (PositionStack)malloc(sizeof(Stack));  stack->next = NULL;
 
 	// Izbornik
-
 	printf("\t\tIZBORNIK\n");
 	printf("- Kreiranje novog direktorija (md): 0\n");
 	printf("- Promjena direktorija (cd): 1\n");
@@ -78,7 +77,7 @@ int main()
 		{
 
 			case 0: //md
-				if(strcmp(mainDir->name, current->name) != 0)
+			//	if(strcmp(mainDir->name, current->name) != 0)
 					printf("%s/%s/ \n", mainDir->name, current->name);
 
 				scanf(" %s", &name);
@@ -119,7 +118,6 @@ int main()
 		}
 
 	}
-
 
 	deleteTree(mainDir);
 
@@ -240,15 +238,16 @@ Result printDir(PositionDir current) {
 
 	PositionDir child = current->child;
 
-	if (child == NULL)
+	if (child == NULL) {
 		printf("Direktorij je prazan!\n");
+		return SUCCESS;
+	}
 
 	printf("Directory of %s:\n", current->name);
 	while (child != NULL) {
 		printf("%s\n", child->name);
 		child = child->sibling;
 	}
-
 
 	return SUCCESS;
 }
