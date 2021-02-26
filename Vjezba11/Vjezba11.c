@@ -41,19 +41,58 @@ int findKey(char* surname);
 int getIndex(int key, int hashSize);
 hashTab tabInit(int hashSize);
 int printHashTable(hashTab table);
-
+ListPosition findListMember(hashTab table);
 
 int main()
 {
 	hashTab myHashTable;
+	ListPosition trazeni;
 
 	myHashTable = tabInit(11);
 
 	readFromFile(myHashTable);
+	insertInTab("Leo", "Messi", 214, myHashTable);
+	insertInTab("Lebron", "James", 213, myHashTable);
+	insertInTab("Moja", "Malenkost", 420, myHashTable);
+	insertInTab("Mate", "Vodoinstalater", 213, myHashTable);
+	insertInTab("Vojko", "Vrucina", 169, myHashTable);
+
 
 	printHashTable(myHashTable);
 
+	trazeni = findListMember(myHashTable);
+
+	printf("Pronasli smo studenta %s %s. \n", trazeni->Ime, trazeni->Prezime);
+
 	return 0;
+}
+ListPosition findListMember(hashTab table) {
+
+	char prezime[30] = { 0 };
+	char ime[30] = { 0 };
+	int kljuc,index;
+	ListPosition pom;
+
+	printf("Unesite ime studenta kojeg trazite:\n");
+	scanf(" %s", ime);
+
+	printf("Unesite prezime studenta kojeg trazite:\n");
+	scanf(" %s", prezime);
+
+	kljuc = findKey(prezime);
+	index = getIndex(kljuc, table->hashSize);
+
+	pom = table->headList[index];
+
+	while (pom != NULL && ( strcmp(pom->Ime, ime) != 0 ) && (strcmp(pom->Prezime, prezime) != 0) )
+		pom = pom->Next;
+
+	if (pom == NULL) {
+		printf("Student %s %s nije upisan u hash tablicu, vraćam NULL!\n");
+		return NULL;
+	}
+
+	return pom;
 }
 
 int findKey(char* surname) {
