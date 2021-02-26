@@ -23,7 +23,6 @@ int PostOrder(Position root);
 int PreOrder(Position root);
 //int scanDat()
 
-
 int main()
 {
 	Stablo root = NULL;
@@ -112,8 +111,8 @@ Position findElement(int X, Position root) {
 Position findMin(Position root) {
 	if (NULL == root)
 		return NULL;
-	else if (NULL == root->El)
-		return NULL;
+	else if (NULL == root->L)
+		return root;
 	else
 		return findMin(root->L); // Jer su najmanji clanovi na pozicija->L!
 }
@@ -163,12 +162,11 @@ Stablo deleteElement(int X, Position root) {
 	else
 	{
 		temp = root;
-		if(NULL == root->R)
-		{
+		if (NULL == root->L)
+			root = root->R; // Ovo ima smisla kad pogledamo da nam vraca root.
+		else
 			root = root->L;
-			free(temp);
-		}
-
+		free(temp);
 	}
 
 	return root;

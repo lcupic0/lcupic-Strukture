@@ -192,8 +192,6 @@ Position zbrajanjePol(Position head1, Position head2) {
 			head2 = head2->next;
 			if (head2->next == NULL)
 			{
-				//r->coef = head1->next->coef; 
-				//r->exp = head1->next->exp;
 				head1 = head1->next;
 				unosEnd(head1, head);
 			}
@@ -235,7 +233,7 @@ int freeMalloc(Position p) {
 	Position pocetak = p, prev = p;
 
 	while (pocetak->next != NULL) {
->		while (p->next != NULL) {
+		while (p->next != NULL) {
 			prev = p;
 			p = p->next;
 		}

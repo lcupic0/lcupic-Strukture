@@ -43,7 +43,6 @@ Result makeDirectory(PositionDir current, char* name);
 PositionDir findPrev(PositionDir current, char* name);
 Result printDir(PositionDir current);
 
-
 int main()
 {
 	int izbor = 0; 
@@ -77,9 +76,7 @@ int main()
 		{
 
 			case 0: //md
-			//	if(strcmp(mainDir->name, current->name) != 0)
-					printf("%s/%s/ \n", mainDir->name, current->name);
-
+				printf("%s/%s/ \n", mainDir->name, current->name);
 				scanf(" %s", &name);
 				makeDirectory(current, name);
 				break;

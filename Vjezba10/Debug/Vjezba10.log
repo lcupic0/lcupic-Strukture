@@ -1,1 +1,3 @@
-﻿  Vjezba10.vcxproj -> C:\Users\Luka\source\repos\StrukturePodataka\Vjezba10\Debug\Vjezba10.exe
+﻿  Vjezba10.c
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba10\Vjezba10.c(78,23): warning C4033: 'printInOrder' must return a value
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba10\Vjezba10.c(94): warning C4715: 'printInOrder': not all control paths return a value

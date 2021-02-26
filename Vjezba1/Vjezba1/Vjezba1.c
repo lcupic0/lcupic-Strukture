@@ -1,4 +1,13 @@
-#define _CRT_SCURE_NO_WARNINGS
+﻿/*
+1. Napisati program koji prvo pročita koliko redaka ima datoteka, tj. koliko ima studenata
+zapisanih u datoteci. Nakon toga potrebno je dinamički alocirati prostor za niz struktura
+studenata (ime, prezime, bodovi) i učitati iz datoteke sve zapise. Na ekran ispisati ime,
+prezime,apsolutni i relativni broj bodova.
+Napomena: Svaki redak datoteke sadrži ime i prezime studenta, te broj bodova na kolokviju.
+relatvan_br_bodova = br_bodova/max_br_bodova*100
+*/
+
+#define _CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
 #include<stdlib.h>
 #define MAX_BODOVI 53
@@ -17,15 +26,14 @@ int brojacStudenata(FILE* nekadat) // Je li ovo najbolji nacin za poslati "datot
     char niz[100]; // Kako dinamicki alocirati ako ne unaprijed ne znam broj studenata
 
     while (fgets(niz, 100, nekadat) != NULL) {
-        if ((niz[0] != '\n'))
+        if ((niz[0] != '\n')) 
             brojac++;
     }
-
 
     return brojac;
 }
 
-int MaxBodovi(Student* Studenti, int brojac) // Je li ovo najbolji nacin za poslati "datoteku" ? PROVJERIT!
+int MaxBodovi(Student* Studenti, int brojac) 
 {
     int i = 0, maxbodovi;
 
@@ -78,6 +86,7 @@ int main()
     }
 
     brojac = brojacStudenata(dat);
+    fclose(dat);
     printf("Broj studenata: %d\n", brojac);
 
     Studenti = (Student*)malloc(brojac * sizeof(Student));
@@ -92,6 +101,5 @@ int main()
         printf("%s\t%s\t%d\t\t%lf\n", Studenti[i].Ime, Studenti[i].Prezime, Studenti[i].bodovi, relativno(Studenti[i].bodovi, maxbodovi));
     }
 
-    fclose(dat);
     return 0;
 }

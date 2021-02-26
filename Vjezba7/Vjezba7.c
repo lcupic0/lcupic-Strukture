@@ -32,6 +32,11 @@ int main()
 
 	fgets(buffer, 100, postfiks);
 
+	/*
+	Ukoliko sscanf očekuje jedan broj i dobije ga u bufferu, vratit će rezultat 1.
+	Ukoliko sscanf očekuje jedan broj i dobije + u bufferu, vratit će 0 ili -1 (EOF).
+	*/
+
 	//Postupak računanja postfiksa
 	while (*buffer != '\0')
 	{
@@ -101,7 +106,7 @@ int Push(Position head, int x) { //first - samo pokazivac na prvi element, nema 
 	return 1;
 }
 
-int Pop(Position head, Position first) {
+int Pop(Position head, Position first) { // Ovaj first nam ni ne triba!
 	Position temp;
 
 	temp = first;

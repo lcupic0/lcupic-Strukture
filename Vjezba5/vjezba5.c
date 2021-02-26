@@ -1,233 +1,209 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿/*
+5. Za dvije sortirane liste L1 i L2 (mogu se pročitati iz datoteke ili unijeti ručno, bitno je
+samo da su sortirane), napisati program koji stvara novu vezanu listu tako da računa:
+a) L1 U L2 --> UNIJA
+b) L1  L2 --> PRESJEK
+Liste osim pokazivača na slijedeću strukturu imaju i jedan cjelobrojni element, po
+kojem su sortirane
+*/
+#define _CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
 #include<stdlib.h>
-#include<string.h>
 
-struct element;
-typedef struct element* Position;
+struct _list;
+typedef struct _list* Position;
 
-int scanDat(FILE*, Position);
-int brojacKoef(FILE*);
-int unosBeg(Position, Position);
+typedef struct _list {
+	int El;
+	Position Next;
+}List;
+
+int scanDat(Position head, FILE* dat);
 int sortUnos(Position, Position);
-Position unijaLista(Position, Position);
-Position presjekLista(Position, Position, int, int);
-
-typedef struct element {
-	int coef;
-	Position next;
-}Element;
+Position unija(Position, Position);
+Position presjek(Position, Position);
 
 int main()
 {
-	Element head1, head2;
-	head1.next = NULL; head1.coef = 0;
-	head2.next = NULL; head2.coef = 0;
-
-	Position unija = NULL, presjek = NULL;
+	List head1, head2;
+	Position Unija, Presjek;
+	head1.Next = NULL;
+	head2.Next = NULL;
 
 	FILE* dat1;
-	FILE *dat2;
+	FILE* dat2;
 
 	dat1 = fopen("datoteka1.txt", "r");
-	if (dat1 == NULL)
-		printf("Datoteka nije uspjesno otvorena!\n");
+	if (!dat1)
+		printf("Datoteka 1 nije otvorena!\n");
 	dat2 = fopen("datoteka2.txt", "r");
-	if (dat2 == NULL)
-		printf("Datoteka nije uspjesno otvorena!\n");
+	if (!dat2)
+		printf("Datoteka 1 nije otvorena!\n");
 
-	int brojac1 = brojacKoef(dat1);
-	int brojac2 = brojacKoef(dat2);
+	scanDat(&head1, dat1);
+	scanDat(&head2, dat2);
 
-	//ucitavanje listi
-	scanDat(dat1, &head1);
-	scanDat(dat2, &head2);
+	printList(&head1); printList(&head2);
 
-	//unijaLista
-	unija = unijaLista(&head1, &head2);
+	printf("Unija: \n");
+	Unija = unija(&head1, &head2);
+	printList(Unija);
 
-	//test print
-	printf("Lista 1:\n");
-	printList(&head1);
-	printf("Lista 2:\n");
-	printList(&head2);
+	printf("Presjek: \n");
+	Presjek = presjek(&head1, &head2);
+	printList(Presjek);
 
-	printf("Unija lista:\n");
-	printList(unija);
-
-	printf("Presjek lista:\n");
-	presjek = presjekLista(&head1, &head2, brojac1, brojac2);
-	printList(presjek);
-
-	system("pause");
 	return 0;
 }
 
-int brojacKoef(FILE* dat) { //provjera ne triba jer je u skenu napravljena
-	char niz[50];
-	int brojac = 0;
+int scanDat(Position head, FILE* dat) {
 
-	while (fgets(niz, 50, dat) != NULL)
-	{
-		if (niz[0] != '\n')
+	char buffer[10];
+	int brojac = 0;
+	Position p;
+
+	while (fgets(buffer, 10, dat)) {
+		if (buffer[0] != '\n')
 			brojac++;
 	}
 	rewind(dat);
-	//fclose(dat); -- ne smimo zatvorit datoteku jer je kasnije opet kroistimo pa zato koristim REWIND!
-	return brojac;
-}
 
-int sortUnos(Position what, Position where) { //where ce bit adresa od heada
-											  //what - koeficijent - JEDNA KUĆICA ajmo reć
-
-	while (where->next != NULL && what->coef < where->next->coef) //where->next != NULL ?
-		where = where->next;
-
-	what->next = where->next;
-	where->next = what;
-
-	return 0;
-
-}
-
-
-int scanDat(FILE* dat, Position head) { //p je adresa od heada
-
-	Position p;
-	int coef = 0, brojac = 0, i;
-
-	brojac = brojacKoef(dat);
-
-	//stvaranje liste
-	for (i = 0; i < brojac; i++)
-	{
-		fscanf(dat, "%d", &coef);
-
-		p = (Position)malloc(sizeof(Element));
-		p->coef = coef;
-		p->next = NULL;
-
-		sortUnos(p, head);
+	for (int i = 0; i < brojac; i++) {
+		p = (Position)malloc(sizeof(List));
+		fscanf(dat, "%d", &p->El);
+		p->Next = NULL;
+		sortUnos(head, p);
 	}
 
 	fclose(dat);
-	return 0;
+
+	return 1;
 }
 
-int unosEnd(Position what, Position where) {
+int sortUnos(Position head, Position p) {
 
-	while (where->next != NULL)
-		where = where->next;
-
-	what->next = where->next;
-	where->next = what;
-
-	return 0;
-}
-
-int unosBeg(Position what, Position where) {
-
-	what->next = where->next;
-	where->next = what;
-
-	return 0;
-}
-
-int printList(Position head) {
-
-	head = head->next; // NE ZABORAVLJAT NA OVO - ili slat adresu prvog clana!!!
-	while (head != NULL) {
-		printf("%d \n", head->coef);
-		head = head->next;
-	}
-	return 0;
-}
-
-Position unijaLista(Position head1, Position head2) {
-	Position head;
-	Position r;
-
-	head = (Position)malloc(sizeof(Element));
-	head->coef = 0;
-	head->next = NULL;
-
-	while (head1->next != NULL && head2->next != NULL) {
-
-		if (head1->next->coef == head2->next->coef) { // U slucaju istih exp, zbroji koef i postavi exp
-			r = (Position)malloc(sizeof(Element));
-			r->coef = head1->next->coef;
-			sortUnos(r, head);
-			head1 = head1->next;
-			head2 = head2->next;
-			if (head1->next == NULL)
-			{
-				r->coef = head2->next->coef; // OVO NECE RADITI jer smo već koristili r!
-				unosEnd(r, head);
-			}
-
-			if (head2->next == NULL)
-			{
-				head1 = head1->next;
-				unosEnd(head1, head);
-			}
-
-			continue;
-		}
-
-		if (head1->next->coef > head2->next->coef) {
-			r = (Position)malloc(sizeof(Element));
-			r->coef = head1->next->coef;
-			sortUnos(r, head);
-			head1 = head1->next;
-			if (head1->next == NULL)
-			{
-				r->coef = head2->next->coef;
-				unosEnd(r, head);
-			}
-			continue;
-		}
-
-		if (head2->next->coef > head1->next->coef) { // U slucaju da je jedan veci od drugoga u r zapisi veci i makni mu pokaziva na iduci clan
-			r = (Position)malloc(sizeof(Element));
-			r->coef = head2->next->coef;
-			sortUnos(r, head);
-			head2 = head2->next;
-			if (head2->next == NULL)
-			{
-				head1 = head1->next;
-				unosEnd(head1, head);
-			}
-		}
-
+	if (head->Next == NULL) {
+		p->Next = head->Next;
+		head->Next = p;
+		return 1;
 	}
 
+	while (head->Next != NULL && head->Next->El < p->El)
+		head = head->Next;
 
-	return head;
+	p->Next = head->Next;
+	head->Next = p;
+
+	return 1;
 }
 
-Position presjekLista(Position head1, Position head2, int brojac1, int brojac2) {
+int printList(Position p) {
 
-	int i, j;
-	Position presjek = NULL;
-	Position head, pom;
-	head = (Position)malloc(sizeof(Element));
-	head->next = NULL; head->coef = 0;
-	pom = head2;
+	if (p->Next == NULL) {
+		printf("Vasa lista je prazna!\n");
+		return 1;
+	}
 
-	for (i = 0;i < brojac1;i++) {
+	while (p->Next != NULL) {
+		p = p->Next;
+		printf("%d ", p->El);
+	}
+	printf("\n");
 
-		for (j = 0;j < brojac2;j++) {
+	return 1;
+}
 
-			if (head1->next->coef == head2->next->coef) {
-				presjek = (Position)malloc(sizeof(Element));
-				presjek->coef = head1->next->coef;
-				sortUnos(presjek, head);
-			}
-			head2 = head2->next;
+Position unija(Position p1, Position p2) {
+
+	Position head, temp;
+	head = (Position)malloc(sizeof(List));
+	head->Next = NULL;
+	p1 = p1->Next;
+	p2 = p2->Next;
+
+	while (p1 != NULL || p2 != NULL) {
+
+		if (p1->El == p2->El) {
+			temp = (Position)malloc(sizeof(List));
+			temp->El = p1->El;
+			sortUnos(head, temp);
+
+			p1 = p1->Next;
+			p2 = p2->Next;
 		}
-		head1 = head1->next;
-		head2 = pom;
+		else if (p1->El > p2->El) {
+
+			temp = (Position)malloc(sizeof(List));
+			temp->El = p2->El;
+			sortUnos(head, temp);
+
+			p2 = p2->Next;
+		}
+		else {
+
+			temp = (Position)malloc(sizeof(List));
+			temp->El = p1->El;
+			sortUnos(head, temp);
+
+			p1 = p1->Next;
+		}
+
+		if (p1 == NULL) {
+
+			while (p2 != NULL)
+			{
+				temp = (Position)malloc(sizeof(List));
+				temp->El = p2->El;
+				sortUnos(head, temp);
+				p2 = p2->Next;
+			}
+
+		}
+
+		if (p2 == NULL) {
+
+			while (p1 != NULL)
+			{
+				temp = (Position)malloc(sizeof(List));
+				temp->El = p1->El;
+				sortUnos(head, temp);
+				p1 = p1->Next;
+			}
+
+		}
+
 	}
 
 	return head;
+}
+
+Position presjek(Position p1, Position p2) {
+
+	Position Presjek;
+	Position temp;
+	Position new;
+	Presjek = (Position)malloc(sizeof(List));
+	Presjek->Next = NULL;
+
+
+	p2 = p2->Next;
+	temp = p2;
+	p1 = p1->Next;
+	while (p1 != NULL) {
+
+		while (p2 != NULL)
+		{
+			if (p1->El == p2->El) {
+				new = (Position)malloc(sizeof(List));
+				new->El = p1->El;
+				sortUnos(Presjek, new);
+			}
+
+			p2 = p2->Next;
+		}
+		p2 = temp;
+		p1 = p1->Next;
+	}
+
+	return Presjek;
 }

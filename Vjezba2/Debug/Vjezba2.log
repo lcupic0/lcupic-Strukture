@@ -1,5 +1,3 @@
-﻿  vjezba2.c
-C:\Users\Luka\source\repos\StrukturePodataka\Vjezba2\vjezba2.c(36,11): warning C4013: 'printf' undefined; assuming extern returning int
-C:\Users\Luka\source\repos\StrukturePodataka\Vjezba2\vjezba2.c(46,14): warning C4013: 'scanf' undefined; assuming extern returning int
-C:\Users\Luka\source\repos\StrukturePodataka\Vjezba2\vjezba2.c(32,9): warning C4101: 'pom': unreferenced local variable
-C:\Users\Luka\source\repos\StrukturePodataka\Vjezba2\vjezba2.c(34,10): warning C4101: 'ime': unreferenced local variable
+﻿vjezba2.obj : error LNK2019: unresolved external symbol _printf referenced in function _createStudent
+vjezba2.obj : error LNK2019: unresolved external symbol _scanf referenced in function _createStudent
+C:\Users\Luka\source\repos\StrukturePodataka\Vjezba2\Debug\Vjezba2.exe : fatal error LNK1120: 2 unresolved externals

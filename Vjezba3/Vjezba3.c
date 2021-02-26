@@ -1,335 +1,351 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
 #include<stdlib.h>
-#include<string.h>
+#define MAX_ZNAKOVA (100)
 
-#define MAX 200
+struct _osoba;
+typedef struct _osoba* Position;
+typedef struct _osoba {
+	char ime[MAX_ZNAKOVA];
+	char prezime[MAX_ZNAKOVA];
+	int godinaRodjenja;
+	Position Next;
+}Osoba;
 
-struct _student;
-typedef struct _student* Position;
-
-typedef struct _student {
-
-    char ime[MAX], prezime[MAX];
-    int godinaRodjenja;
-
-    Position next;
-
-}Student;
-
-int printList(Position head);
-Position createStudent();
+Position makeNode();
 int insertBeg(Position what, Position where);
 int insertEnd(Position what, Position where);
-Position findElement(char* prezime, Position where);
-int deleteElement(char* prezime, Position where);
-Position findPrev(char* prezime, Position where);
-int addAfter(Position what, Position where);
-int addBefore(Position what, Position where, char* prezime);
-int sortUnos(Position what, Position where);
-int writeDat(Position head);
-int scanDat(Position head);
-int brojacStudenata();
+int printList(Position p);
+Position findPrev(Position p, char* Ime, char* Prezime);
+Position findStudent(Position p, char* Ime, char* Prezime);
+int deleteStudent(Position p, char* Ime, char* Prezime);
+int addAfter(Position p, Position student);
+int addBefore(Position p, Position student);
+int sortUnos(Position p, Position student);
+int writeDat(Position p);
+int scanDat(Position p);
+int deleteAll(Position p);
 
-int main(void)
+int main()
 {
-    Student head;
-    head.next = NULL;
-    Position what;
-    char izbor;
-    char prezime[MAX];
+	char tempIme[MAX_ZNAKOVA];
+	char tempPrezime[MAX_ZNAKOVA];
+	Osoba head;
+	head.Next = NULL;
+	Position student;
+	int x;
 
-    printf("Ako zelite izaci iz ovog izbornika unesite: K\n");
-    printf("Ako zelite dodati studenta na kraj liste unesite 1\n");
-    printf("Ako zelite dodati studenta na pocetak liste unesite 2\n");
-    printf("Ako zalite pronaci studenta unesite 3\n");
-    printf("Ako zelite pronaci prethodnog studenta unesite 4\n");
-    printf("Ako zelite izbrisat studenta unesite 5\n");
-    printf("Ako zelite studenta iza odredenog studenta unesite 6\n");
-    printf("Ako zelite studenta ispred odredenog studenta unesite 7\n");
-    printf("Ako zelite vasu listu studenata dodati u datoteku unesite 8\n");
-    printf("Ako zelite studente iz datoteke dodati u listu unesite 9\n");
-    printf("Ako zelite sortirani unos studenata unesite s\n");
+	while (1) {
+		printf("Unesi opciju: \n");
+		scanf("%d", &x);
 
-    printf("Za ispis studenta unesite i\n");
+		if (x == 0)
+			break;
 
-    while (1)
-    {
-        scanf(" %c", &izbor);
-        if (izbor == '0')
-            break;
+		switch (x) {
+		case 1:
+			printf("Unesi ime trazenog studenta: \n");
+			scanf(" %s", tempIme);
+			printf("Unesi prezime tog studenta: \n");
+			scanf(" %s", tempPrezime);
+			printf("Adresa trazenog studenta: %d", findStudent(&head, tempIme, tempPrezime));
 
-        switch (izbor) {
+			break;
+		case 2:
+			student = makeNode();
+			insertBeg(student, &head);
+			break;
+		case 3:
+			student = makeNode();
+			insertEnd(student, &head);
+			break;
+		case 4:
+			printList(&head);
+			break;
+		case 5:
+			printf("Unesi ime studenta za brisanje: \n");
+			scanf(" %s", tempIme);
+			printf("Unesi prezime studenta za brisanje: \n");
+			scanf(" %s", tempPrezime);
+			deleteStudent(&head, tempIme, tempPrezime);
+			break;
+		case 6:
+			printf("Unos studenta:\n");
+			student = makeNode();
+			addAfter(&head, student);
+			break;
+		case 7:
+			printf("Unos studenta:\n");
+			student = makeNode();
+			addBefore(&head, student);
+			break;
+		case 8:
+			printf("Sortirani unos studenta:\n");
+			student = makeNode();
+			sortUnos(&head, student);
+			break;
+		case 9:
+			scanDat(&head);
+			break;
+		case 10:
+			deleteAll(&head);
+			break;
+		case 0:
+			break;
+		}
 
-        case '1':
-            what = createStudent();
-            insertEnd(what, &head);
-            break;
+	}
 
-        case '2':
-            what = createStudent();
-            insertBeg(what, &head);
-            break;
-
-        case '3':
-            printf("Unesite prezime studenta kojeg zelite pronaci: \n");
-            scanf(" %s", prezime);
-            printf("Adresa zeljenog studenta je: %d\n", findElement(prezime, &head));
-            break;
-
-        case '4':
-            printf("Unesite prezime studenta cijeg prethodnika zelite pronaci: \n");
-            scanf(" %s", prezime);
-            printf("Adresa prethodnog elementa je: %d\n", findPrev(prezime, &head));
-            break;
-
-        case '5':
-            printf("Unesite prezime studenta kojeg zelite izbrisati: \n");
-            scanf(" %s", prezime);
-            deleteElement(prezime, &head);
-            break;
-
-        case '6':
-            printf("Unos studenta kojeg zelite dodati:\n");
-            what = createStudent();
-            addAfter(what, &head);
-            break;
-
-        case '7':
-            printf("Unos studenta kojeg zelite dodati:\n");
-            what = createStudent();
-            printf("Unesite prezime studenta ispred kojeg zelite dodati unesenog studenta:\n");
-            scanf(" %s", prezime);
-            addBefore(what, &head, prezime);
-
-        case '8':
-            writeDat(&head);
-            break;
-
-        case '9':
-            scanDat(&head);
-            break;
-
-        case 's':
-            printf("Unos studenta koji ce ici u listu sortiranu po prezimenu: \n");
-            what = createStudent();
-            sortUnos(what, &head);
-            break;
-
-        case 'i':
-            printList(&head);
-            break;
-
-        case 'K':
-            break;
-
-        default:
-            printf("Krivi odabir!\n");
-            break;
-        }
-    }
-
-    printf("\nIzasli ste iz izbornika! \n");
-
-    return 0;
+	return 0;
 }
 
-Position createStudent() {  // POSITION NAM JE SAMO TIP VARIJABLE!!!
-                                                        //Ova funkcija samo sluzi za unos u strukturu, a ne u LISTU!!!!
-    Position student = NULL;
-    student = (Position)malloc(sizeof(Student));
+Position makeNode() {
+	Position node;
 
-    if (NULL == student) { // ili if(!student);
-        printf("Allocation failed\r\n");
-        return NULL;
-    }
+	node = (Position)malloc(sizeof(Osoba));
+	if (node == NULL) {
+		printf("Memory allocation failed!\n");
+		return NULL;
+	}
 
-    printf("Insert first name:\r\n");
-    scanf(" %s", student->ime);
+	node->Next = NULL;
 
-    printf("Insert last name:\r\n");
-    scanf(" %s", student->prezime);
+	printf("Insert students name: \n");
+	scanf(" %s", node->ime);
+	printf("Insert students surname: \n");
+	scanf(" %s", node->prezime);
+	printf("Insert birth year: \n");
+	scanf("%d", &node->godinaRodjenja);
 
-    printf("Insert birth year:\r\n");
-    scanf("%d", &student->godinaRodjenja);
-
-    student->next = NULL;
-
-    return student;
+	return node;
 }
 
-int insertBeg(Position what, Position where) { //Funkcija koja unosi neki element nakon nekog drugoga!!!
-    what->next = where->next; // Skicirat na papir pa će biti lakše za skužiti!
-    where->next = what;
-    return 0;
+int insertBeg(Position what, Position head) {
+
+	if (what == NULL) {
+		printf("Problem prilikom unosa na pocetak!\n");
+		return -1;
+	}
+
+	what->Next = head->Next;
+	head->Next = what;
+
+	return 1;
 }
 
-int insertEnd(Position what, Position where) { // Funkcija koja postavlja neki element na zadnje misto u nizu!!!
-    while (where->next != NULL) {
-        where = where->next;
-    }
+int insertEnd(Position what, Position p) {
 
-    where->next = what;   //what->next=where->next - mislim da ovo dode na isto
-    what->next = NULL;      // where->next=what
-    return 0;
+	if (what == NULL) {
+		printf("Problem prilikom unosa na pocetak!\n");
+		return -1;
+	}
+
+	while (p->Next != NULL)
+		p = p->Next;
+
+	what->Next = p->Next;
+	p->Next = what;
+
+	return 1;
 }
 
-int printList(Position head) {
-    Position p = NULL;
-    p = head->next; // OVO JE KLJUČNO!
+int printList(Position p) {
 
-    printf("\nList contains:\r\n");
+	if (p->Next == NULL) {
+		printf("Vaša lista je prazna!\n");
+		return 1;
+	}
 
-    while (p != NULL) {
-        printf("%s %s %d\n", p->ime, p->prezime, p->godinaRodjenja);
-        p = p->next;
-    }
-
-    printf("\r\n\r\n");
-    return 0;
+	p = p->Next;
+	while (p != NULL) {
+		printf("%s %s %d\n", p->ime, p->prezime, p->godinaRodjenja);
+		p = p->Next;
+	}
+	return 1;
 }
 
-Position findElement(char* prezime, Position where) {
-    while (where != NULL && strcmp(where->prezime, prezime))
-        where = where->next;
+Position findStudent(Position p, char* Ime, char* Prezime) {
 
-    if (where == NULL)
-        return NULL;
+	if (p->Next == NULL) {
+		printf("Lista je prazna!\n");
+		return NULL;
+	}
 
-    return where;
+	p = p->Next;
+	while (p != NULL && (strcmp(p->ime, Ime) || strcmp(p->prezime, Prezime))) { //strcmp
+		p = p->Next;
+	}
+
+	if (p == NULL)
+		printf("Trazeni student ne postoji u bazi!\n");
+
+	return p;
 }
 
-Position findPrev(char* prezime, Position where) {
+Position findPrev(Position p, char* Ime, char* Prezime) {
 
-    Position Prev = NULL;
-    Prev = where;
-    where = where->next;
+	Position prev = p;
 
-    while (where != NULL && strcmp(where->prezime, prezime))
-    {
-        Prev = where;
-        where = where->next; // Trazimo član čiji prethodnik zelimo naci, kad ga nademo stopamo!
-    }
+	p = p->Next;
+	while (p != NULL && (strcmp(p->ime, Ime) || strcmp(p->prezime, Prezime))) {
+		prev = p;
+		p = p->Next;
+	}
 
-    return Prev;
+	if (p == NULL) {
+		printf("Student cijeg prethodnika trazite ne postoji!\n");
+		return NULL;
+	}
+
+	return prev;
 }
 
-int deleteElement(char* prezime, Position where) {
+int deleteStudent(Position p, char* Ime, char* Prezime) {
 
-    Position prev = NULL;
+	Position prev, temp;
 
-    prev = findPrev(prezime, where);
-    if (prev->next != NULL)
-    {
-        where = prev->next;
-        prev->next = where->next;
-        free(where);
-    }
-    return 0;
+	prev = findPrev(p, Ime, Prezime);
+
+	if (prev != NULL) {
+		temp = prev->Next;
+		prev->Next = temp->Next;
+		free(temp);
+	}
+
+	return 1;
 }
 
-//Nakon nekog elementa dodaj novi
-int addAfter(Position what, Position where) {  //where = adresa heada
-    Position after;
-    char prezime[MAX];
+int addAfter(Position p, Position student) {
+	char Ime[MAX_ZNAKOVA], Prezime[MAX_ZNAKOVA];
+	Position temp;
 
-    printf("Unesite prezime studenta iza kojeg zelite dodati novog studenta\n");
-    scanf(" %s", prezime);
+	printf("Unesi ime studenta iza kojeg zelis dodat: \n");
+	scanf(" %s", Ime);
+	printf("Unesi prezime studenta iza kojeg zelis dodat: \n");
+	scanf(" %s", Prezime);
 
-    after = findElement(prezime, where);
+	temp = findStudent(p, Ime, Prezime);
 
-    if (after != NULL)
-    {
-        what->next = after->next;
-        after->next = what;
-    }
-    return 0;
+	if (temp == NULL) {
+		printf("Taj student ne postoji!\n");
+		return 0;
+	}
+
+	student->Next = temp->Next;
+	temp->Next = student;
+
+	return 1;
 }
 
-int addBefore(Position what, Position head, char* prezime) {
-    Position prev;
-    prev = findPrev(prezime, head);
+int addBefore(Position p, Position student) {
 
-    if (prev != NULL)
-    {
-        what->next = prev->next;
-        prev->next = what;
-    }
+	char Ime[MAX_ZNAKOVA], Prezime[MAX_ZNAKOVA];
+	Position prev;
 
-    return 0;
+	printf("Unesi ime studenta ispred kojeg zelis dodat: \n");
+	scanf(" %s", Ime);
+	printf("Unesi prezime studenta ispred kojeg zelis dodat: \n");
+	scanf(" %s", Prezime);
+
+	prev = findPrev(p, Ime, Prezime);
+
+	if (prev != NULL) {
+
+		student->Next = prev->Next;
+		prev->Next = student;
+	}
+
+	return 1;
+}
+
+int sortUnos(Position p, Position student) {
+
+	if (p->Next == NULL)
+	{
+		student->Next = p->Next;
+		p->Next = student;
+		return 1;
+	}
+
+	while (p->Next != NULL && strcmp(student->prezime, p->Next->prezime) > 0)
+		p = p->Next;
+
+	student->Next = p->Next;
+	p->Next = student;
+
+	return 1;
 }
 
 int writeDat(Position p) {
-    FILE* dat;
-    dat = fopen("lista.txt", "w");
-    if (dat == NULL)
-        printf("Greška, datoteka nije otvorena!\n");
 
-    p = p->next;
-    while (p != NULL)
-    {
-        fprintf(dat, "%s %s %d\n", p->ime, p->prezime, p->godinaRodjenja);
-        p = p->next;
-    }
+	FILE* dat;
+	dat = fopen("studenti.txt", "w");
+	if (!dat)
+		printf("Datoteka se nije uspjesno kreirala!\n");
 
-    fclose(dat);
+	if (p->Next == NULL) {
+		printf("Lista je prazna i ne unosim je u datoteku!\n");
+		return -1;
+	}
 
-    return 0;
+	p = p->Next;
+	while (p != NULL) {
+		fprintf(dat, "%s %s %d\n", p->ime, p->prezime, p->godinaRodjenja);
+		p = p->Next;
+	}
+
+	fclose(dat);
+	return 1;
 }
 
-int sortUnos(Position what, Position where) { //where ce bit adresa od heada
-                                              //what - student kojeg unesemo --> pa ćemo njih dvojicu usporedivati po prezimenu i odma sortirati listu!
-    while (where->next != NULL && strcmp(what->prezime, where->next->prezime) > 0) // strcmp vraca negativan broj ako je prvi char manji od drugoga
-        where = where->next;
+int scanDat(Position p) {
 
-    what->next = where->next;
-    where->next = what;
+	char buffer[MAX_ZNAKOVA];
+	FILE* dat;
+	int brojac = 0;
+	Position temp;
+	dat = fopen("studenti.txt", "r");
 
-    return 0;
+
+	if (!dat)
+	{
+		printf("Datoteka se nije otvorila!\n");
+		return -1;
+	}
+
+	while (fgets(buffer, MAX_ZNAKOVA, dat)) {
+		if (buffer[0] != '\n')
+			brojac++;
+	}
+
+	rewind(dat);
+
+	for (int i = 0; i < brojac; i++) {
+		temp = (Position)malloc(sizeof(Osoba));
+		fgets(buffer, MAX_ZNAKOVA, dat);
+		sscanf(buffer, "%s %s %d", temp->ime, temp->prezime, &temp->godinaRodjenja);
+		sortUnos(p, temp);
+	}
+
+	fclose(dat);
+	return 1;
 }
 
-int brojacStudenata() {
-    FILE* dat;
-    char niz[MAX];
-    int brojac = 0;
+int deleteAll(Position p) {
 
-    //Otvaranje datoteke
-    dat = fopen("lista.txt", "r");
-    if (dat == NULL)
-        printf("Greska, datoteka nije otvorena!\n");
+	Position temp;
 
-    while (fgets(niz, MAX, dat) != NULL) {
-        if ((niz[0] != '\n'))
-            brojac++;
-    }
+	if (p->Next == NULL) {
+		printf("Lista je vec prazna!\n");
+		return 1;
+	}
 
-    fclose(dat);
-    return brojac;
-}
+	while (p->Next != NULL) {
+		temp = p->Next;
+		p->Next = temp->Next;
+		free(temp);
+	}
 
-//Dodavanje liste iz datoteke
-int scanDat(Position head) {
-
-    int i = 0, brojac = 0;
-    char niz[MAX];
-    Position p;
-    FILE* dat;
-
-    brojac = brojacStudenata();
-    dat = fopen("lista.txt", "r");
-
-    //Ucitavanje studenata u listu
-    printf("Ucitavanje studenata iz datoteke u listu\n");
-    for (i = 0; i < brojac; i++) {
-        p = (Position)malloc(sizeof(Student));
-        fgets(niz, MAX, dat);
-        sscanf(niz, "%s %s %d\n", p->ime, p->prezime, &p->godinaRodjenja);
-
-        // Zelimo da nam iduci clan doda na kraj tako da bude sortirano kao i u datoteci i zato koristim insertEnd.
-        insertEnd(p, head);
-    }
-
-
-    fclose(dat);
-    return 0;
+	printf("Lista je izbrisana!\n");
+	return 1;
 }

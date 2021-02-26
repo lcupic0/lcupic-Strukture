@@ -1,145 +1,169 @@
-﻿//LIFO
-//FIFO
+﻿/*
+Napomena: Funkcija "push" sprema cijeli broj, slučajno generirani u opsegu od 10 - 100
+*/
 #define _CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
 #include<stdlib.h>
-#include<string.h>
 #include<time.h>
 
-typedef struct Cvor* Position;
+struct _list;
+typedef struct _list* Position;
 
-typedef struct Cvor {
+typedef struct _list {
 	int El;
-	Position next;
-}Data;
+	Position Next;
+}Node;
 
-int Push(Position S);
-int Pop(Position S, Position first);
-int printStack(Position S);
-
-Position PushRow(Position S, Position last);
-int PopRow(Position S);
-
-int deleteAll(Position S);
+int pushStack(Position p);
+int popStack(Position p);
+Position pushRow(Position p, Position last);
+int popRow(Position p);
+int printList(Position p);
+int deleteAll(Position p);
 
 int main()
 {
-	Position stack;
-	stack = (Position)malloc(sizeof(Data));
-	stack->next = NULL;
-
-	Position row;
-	row = (Position)malloc(sizeof(Data));
-	row->next = NULL;
-
-	Position last = NULL;
-	int i;
 	srand(time(0));
-	
-	//Stack
-	for (i = 0;i < 4;i++) {
-		Push(stack);
-	}
-	Pop(stack, stack->next); // Jer zelimo slati prvi element, a ne head!
 
-	printf("Ispis stoga: \n");
-	printStack(stack->next); 
-	last = row;
-	//Row 
-	for (i = 0;i < 4;i++) {
-		last=PushRow(row, last); //Da ne vrtimo while uvik vracat cemo zadnjeg i uvik ga slat.
-	}
-	PopRow(row);
-	
-	printf("\nIspis reda: \n");
-	printStack(row->next);
+	Position lastInRow;
+	Node Red;
+	Red.Next = NULL;
+	Node Stek;
+	Stek.Next = NULL;
 
-	printf("Brisanje stoga/reda: \n");
-	deleteAll(stack); deleteAll(row);
-	printStack(stack->next); printStack(row->next);
+	// STACK
+
+	for (int i = 0;i < 7;i++)
+		pushStack(&Stek);
+	printList(&Stek);
+
+	for (int i = 0;i < 7;i++)
+		popStack(&Stek);
+	printList(&Stek);
+
+	printf("\n\n");
+
+
+	// ROW
+	lastInRow = &Red;
+	for (int i = 0;i < 7;i++)
+		lastInRow = pushRow(&Red, lastInRow);
+	printList(&Red);
+	printf("\n");
+	for (int i = 0;i < 7;i++)
+		popRow(&Red);
+	printList(&Red);
+
+	deleteAll(&Red);
+	printList(&Red);
+	deleteAll(&Stek);
+	printList(&Stek);
 
 	return 0;
 }
 
-int Push(Position head) { //first - samo pokazivac na prvi element, nema podataka. -> bolje radit sa HEADOM.
+int pushStack(Position p) { //Dodajemo na pocetak.
 
-	Position new = NULL;
+	Position new;
 	int x;
 
-	x = 10 + rand() % 91;
+	x = 10 + rand() % (100 - 10 + 1);
 
-	new = (Position)malloc(sizeof(Data));
+	new = (Position)malloc(sizeof(Node));
 	new->El = x;
-	new->next = head->next;
-	head->next = new;
+
+	new->Next = p->Next;
+	p->Next = new;
 
 	return 1;
 }
 
-int Pop(Position head, Position first) {
+int popStack(Position p) {
+
 	Position temp;
 
-	temp = first;
-	head->next = first->next;
-	first = first->next; // Nije bitan dio!
+	if (p->Next == NULL) {
+		printf("Stog/Red je prazan!\n");
+		return -1;
+	}
+
+	temp = p->Next;
+	p->Next = temp->Next;
 	free(temp);
 
 	return 1;
 }
 
-int printStack(Position first) { // S mora biti adresa prvog clana, a ne heada!
+int printList(Position p) {
 
-	while (first!= NULL) {
-
-		printf("%d \n", first->El);
-		first = first->next;
+	if (p->Next == NULL)
+	{
+		printf("Lista je PRAZNA! \n");
+		return -1;
+	}
+	//p = p->Next;
+	while (p->Next != NULL) {
+		printf("%d ", p->Next->El);
+		p = p->Next;
 	}
 
-	return 0;
+
+	return 1;
 }
 
-Position PushRow(Position S, Position last) { //Dodajemo na kraj, a skidamo s pocetka.
+Position pushRow(Position p, Position last) { // Dodajemo na kraj, skidamo s pocetka.
 
+	Position new = (Position)malloc(sizeof(Node));
 	int x;
-	Position new = (Position)malloc(sizeof(Data));
-	
 	x = 10 + rand() % 91;
-	/*
-	//zadnji element
-	while (S->next != NULL) {  ---> glupo je ovo korsitit jer svaki put vrtimo while pa nam nema smisla PRIPAZIT.
-		S = S->next;
-		last = S;
-	} */
+	new->El = x; new->Next = NULL;
 
-	new->El = x;
-	new->next = last->next;
-	last->next = new;
+	if (p->Next == NULL) {
+		new->Next = p->Next;
+		p->Next = new;
+		last = new;
+		return last;
+	}
+
+	new->Next = last->Next;
+	last->Next = new;
 	last = new;
 
 	return last;
 }
 
-int PopRow(Position row) {
+int popRow(Position p) { // Skidam s pocetka.
 
-	Position first;
+	Position temp = p->Next;
 
-	first = row->next;
-	row->next = first->next;
-	free(first);
-
-	return 0;
-}
-
-int deleteAll(Position S) {
-
-	Position Temp = NULL;
-
-	while (S->next != NULL)
-	{
-		Temp = S->next;
-		S->next = Temp->next;
-		free(Temp);
+	if (p->Next == NULL) {
+		printf("Row is empty, can't pop!\n");
+		return -1;
 	}
 
-	return 0;
+	p->Next = temp->Next;
+	printf("Pop: %d\n", temp->El);
+	free(temp);
+
+	return 1;
+}
+
+int deleteAll(Position p) {
+
+	Position temp;
+	if (p->Next = NULL)
+	{
+		printf("Lista je vec prazna!\n");
+		return 1;
+	}
+
+	while (p->Next != NULL) {
+		temp = p->Next;
+		p->Next = temp->Next;
+		free(temp);
+	}
+
+	printf("Red/Lista je izbrisan/a\n");
+
+	return 1;
 }
