@@ -172,7 +172,7 @@ Position findStudent(Position p, char* Ime, char* Prezime) {
 	}
 
 	p = p->Next;
-	while (p != NULL && (strcmp(p->ime, Ime) || strcmp(p->prezime, Prezime))) { //strcmp
+	while (p != NULL && (strcmp(p->ime, Ime) || strcmp(p->prezime, Prezime))) { // vrti dok oba uvjeta nisu nađena i zato ide ||
 		p = p->Next;
 	}
 
